@@ -1,0 +1,26 @@
+$enable-negative-margins: true;
+
+@import "~bootstrap/scss/bootstrap";
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body,
+html,
+#root {
+  height: 100vh;
+}
+
+
+@media (min-width: 992px) {
+  .sticky-lg-top-margin {
+    @extend .sticky-lg-top;
+    top: 24px;
+  }
+}

@@ -1,0 +1,90 @@
+# DEVELOPMENT ENVIRONMENT
+# use the latest version of the docker-compose syntax
+
+version: '3.9'
+
+# List of all services for the development environment
+# things like the actual app, the database, the proxy, 
+# and any other software the app needs to run go here
+
+services:
+  frontend:
+    # what working directory to use
+    build: 
+      context: ./frontend
+      dockerfile: ./Dockerfile
+    user: ${USER_ID}
+    ports:
+      # first port is the one that the server listens to inside the container, 
+      # second one is the port that you wish to use when connecting to the server in the container.
+      - ${PORT:-3000}:${PORT:-3000}
+    volumes:
+      # mounts the current folder from our system into the container as /app
+      - ./frontend:/app:rw
+    env_file: 
+      - ./.env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.frontend.loadbalancer.server.port=${PORT:-3000}"
+      - "traefik.http.routers.frontend.rule=Host(`${DOMAIN:-jr.subspacedev.io}`)"
+      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.docker.network=traefik"
+    networks:
+      - traefik
+
+  # Our django app
+  backend:
+    # what working directory to use
+    build: 
+      context: ./backend
+      dockerfile: ./Dockerfile
+    user: ${USER_ID}
+    command: sh -c "wait-for ${DB_HOST:-database}:${DB_PORT:-3306} -t 5000 -- python manage.py migrate && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:${APP_PORT:-8000}"
+    ports:
+      # first port is the one that the server listens to inside the container, 
+      # second one is the port that you wish to use when connecting to the server in the container.
+      - ${APP_PORT:-8000}:${APP_PORT:-8000}
+    volumes:
+      # mounts the current folder from our system into the container as /app
+      - ./backend:/app:rw
+    env_file: 
+      - ./.env
+    environment:
+      # These are the environment variables that get read into settings.py
+      # The funny parts are how docker reads it from the .env file so we don't have to repeat it in this file and the python code
+      - SECRET_KEY=${SECRET_KEY:-devsecret}
+      - DEBUG=${DEBUG:-0}
+      - DB_HOST=${DB_HOST:-database}
+      - DB_NAME=${DB_NAME:-dev}
+      - DB_USER=${DB_USER:-myapp}
+      - DB_PASS=${DB_PASS:-mypassword}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.services.${SERVICE:-app}.loadbalancer.server.port=${APP_PORT:-8000}"
+      - "traefik.http.routers.${SERVICE:-app}.rule=Host(`${APP_DOMAIN:-dev.subspacedev.io}`)"
+      - "traefik.http.routers.${SERVICE:-app}.entrypoints=web"
+      - "traefik.docker.network=traefik"
+    networks:
+      - traefik
+
+  database:
+    image: mariadb
+    ports: 
+      - ${DB_PORT:-3306}:${DB_PORT:-3306}
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-somerootpass}
+      - MYSQL_DATABASE=${DB_NAME:-dev}
+      - MYSQL_USER=${DB_USER:-myapp}
+      - MYSQL_PASSWORD=${DB_PASS:-mypassword}
+    networks:
+      - traefik
+
+volumes:
+  db-data: {}
+
+networks:
+  traefik:
+    external:
+      name: traefik
