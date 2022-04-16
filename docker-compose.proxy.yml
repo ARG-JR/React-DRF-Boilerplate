@@ -1,0 +1,47 @@
+# DEVELOPMENT ENVIRONMENT
+# use the latest version of the docker-compose syntax
+
+version: '3.9'
+
+# List of all services for the development environment
+# things like the actual app, the database, the proxy, 
+# and any other software the app needs to run go here
+
+services:
+
+  traefik:
+    image: traefik
+    command:
+      - "--api=true"
+      - "--api.dashboard=true"
+      - "--api.debug=true"
+      - "--log.level=DEBUG"
+
+      - "--providers.docker"
+      - "--providers.docker.watch"
+      - "--providers.docker.exposedByDefault=false"
+
+      - "--entrypoints.web.address=:${PROXY_HTTP_PORT:-80}"
+    networks:
+      - traefik
+      - inbound
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - target: 80
+        published: 80
+        mode: host
+    labels:
+    - "traefik.enable=true"
+    - "traefik.http.routers.traefik.rule=Host(`${PROXY_HOST}`)"
+    - "traefik.http.routers.traefik.service=api@internal"
+    - "traefik.http.routers.traefik.entrypoints=web"
+    - "traefik.http.services.traefik.loadbalancer.server.port=888"
+
+volumes:
+  db-data: {}
+
+networks:
+  traefik: 
+    name: traefik
+  inbound: {}
