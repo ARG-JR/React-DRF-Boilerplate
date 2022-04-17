@@ -24,7 +24,7 @@ const SignUpForm = () => {
   const [errorMessage, setErrorMessage] = useState("")
   const navigate = useNavigate();
 
-  const [signup, { isLoading, error }] = useSignupMutation();
+  const [signup, { isLoading }] = useSignupMutation();
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
      e.preventDefault();

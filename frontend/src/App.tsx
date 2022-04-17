@@ -3,13 +3,13 @@ import { Route, Routes } from "react-router-dom";
 import SignUpView from "./views/auth/SignUpView";
 import SignInView from "./views/auth/SignInView";
 import Protect from "./components/auth/Protect";
-import { useAppDispatch, useTypedSelector } from "./hooks/store";
+import { useAppDispatch } from "./hooks/store";
 import { Spinner } from "react-bootstrap";
 import DashboardView from "./views/DashboardView";
 import UserListView from "./views/users/UserListView";
 import EditUserView from "./views/users/EditUserView";
 import UserDetailView from "./views/users/UserDetailView";
-import { setCredentials, logout } from "./features/auth/authSlice";
+import { setCredentials } from "./features/auth/authSlice";
 import { RefreshResponse } from "./models/Auth";
 
 function App() {
