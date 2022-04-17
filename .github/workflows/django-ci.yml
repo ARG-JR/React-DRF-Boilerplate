@@ -47,7 +47,7 @@ jobs:
         SECRET_KEY: testkey
     - name: Run Tests
       run: |
-        cd app
+        cd backend
         pytest --cov
       env: 
         DBENGINE: django.db.backends.mysql
