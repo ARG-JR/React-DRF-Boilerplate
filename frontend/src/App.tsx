@@ -9,7 +9,7 @@ import DashboardView from "./views/DashboardView";
 import UserListView from "./views/users/UserListView";
 import EditUserView from "./views/users/EditUserView";
 import UserDetailView from "./views/users/UserDetailView";
-import { setCredentials } from "./features/auth/authSlice";
+import { setCredentials, logout } from "./features/auth/authSlice";
 import { RefreshResponse } from "./models/Auth";
 
 function App() {

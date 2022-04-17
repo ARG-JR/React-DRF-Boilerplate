@@ -25,9 +25,9 @@ services:
       - ./.env
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.frontend.loadbalancer.server.port=${PORT:-3000}"
-      - "traefik.http.routers.frontend.rule=Host(`${DOMAIN:-jr.subspacedev.io}`)"
-      - "traefik.http.routers.frontend.entrypoints=web"
+      - "traefik.http.services.${FRONTEND_SERVICE:-frontend}.loadbalancer.server.port=${PORT:-3000}"
+      - "traefik.http.routers.${FRONTEND_SERVICE:-frontend}.rule=Host(`${DOMAIN:-jr.subspacedev.io}`)"
+      - "traefik.http.routers.${FRONTEND_SERVICE:-frontend}.entrypoints=web"
       - "traefik.docker.network=traefik"
     networks:
       - traefik
@@ -60,9 +60,9 @@ services:
       - DB_PASS=${DB_PASS:-mypassword}
     labels:
       - "traefik.enable=true"
-      - "traefik.http.services.${SERVICE:-app}.loadbalancer.server.port=${APP_PORT:-8000}"
-      - "traefik.http.routers.${SERVICE:-app}.rule=Host(`${APP_DOMAIN:-dev.subspacedev.io}`)"
-      - "traefik.http.routers.${SERVICE:-app}.entrypoints=web"
+      - "traefik.http.services.${BACKEND_SERVICE:-backend}.loadbalancer.server.port=${APP_PORT:-8000}"
+      - "traefik.http.routers.${BACKEND_SERVICE:-backend}.rule=Host(`${APP_DOMAIN:-dev.subspacedev.io}`)"
+      - "traefik.http.routers.${BACKEND_SERVICE:-backend}.entrypoints=web"
       - "traefik.docker.network=traefik"
     networks:
       - traefik
