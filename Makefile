@@ -15,7 +15,7 @@ help: ## Show this help message
 
 .PHONY: test-frontend
 test-frontend: ## Run unit tests using the dev $(COMPOSE_FILE)
-	@docker-compose -f $(COMPOSE_FILE) run --rm $(FRONTEND_SERVICE) sh -c "yarn test --coverage"
+	@docker-compose -f $(COMPOSE_FILE) run --rm $(FRONTEND_SERVICE) sh -c "yarn test --coverage --silent=false"
 
 .PHONY: test-backend
 test-backend: ## Run unit tests using the dev $(COMPOSE_FILE)

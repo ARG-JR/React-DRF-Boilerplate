@@ -42,7 +42,7 @@ export const authedState = {
 export const authedStaffState = {
   auth: {
     token: "asdf",
-    user: {...testUser, is_staff: true},
+    user: { ...testUser, is_staff: true },
   },
 };
 
@@ -59,5 +59,11 @@ const renderWithProviders = (
   }
   return { store, ...render(ui, { wrapper: Wrapper, ...renderOptions }) };
 };
+
+export function mockFunction<T extends (...args: any[]) => any>(
+  fn: T
+): jest.MockedFunction<T> {
+  return fn as jest.MockedFunction<T>;
+}
 
 export { renderWithProviders };

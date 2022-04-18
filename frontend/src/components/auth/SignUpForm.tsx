@@ -12,7 +12,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 
 import { UserWithPassword } from "../../models/User";
-import { useSignupMutation } from "../../services/auth";
+import { useSignupMutation } from "../../services/authService";
 
 const SignUpForm = () => {
   const [email, setEmail] = useState("");
@@ -21,15 +21,15 @@ const SignUpForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [errorMessage, setErrorMessage] = useState("")
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const [signup, { isLoading }] = useSignupMutation();
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
-     e.preventDefault();
+    e.preventDefault();
     if (password !== confirmPassword) {
-      setErrorMessage("Passwords must match!")
+      setErrorMessage("Passwords must match!");
       return;
     }
 
@@ -44,7 +44,7 @@ const SignUpForm = () => {
     try {
       await signup(user);
     } catch (err) {
-      setErrorMessage("An error has occured")
+      setErrorMessage("An error has occured");
     }
     navigate("/signin");
   };

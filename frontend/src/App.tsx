@@ -1,50 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Route, Routes } from "react-router-dom";
+import Protect from "./components/auth/Protect";
+import { Spinner } from "react-bootstrap";
 import SignUpView from "./views/auth/SignUpView";
 import SignInView from "./views/auth/SignInView";
-import Protect from "./components/auth/Protect";
-import { useAppDispatch } from "./hooks/store";
-import { Spinner } from "react-bootstrap";
 import DashboardView from "./views/DashboardView";
 import UserListView from "./views/users/UserListView";
 import EditUserView from "./views/users/EditUserView";
 import UserDetailView from "./views/users/UserDetailView";
-import { setCredentials } from "./features/auth/authSlice";
-import { RefreshResponse } from "./models/Auth";
+import { useRefreshToken } from "./hooks/refresh";
 
 function App() {
-  const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const refresh = async () => {
-      const token = localStorage.getItem("refreshToken");
-      if (token) {
-        const refreshRequest = {
-          refresh: token,
-        };
-
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/auth/refresh/`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(refreshRequest),
-          }
-        );
-
-        if (response.status === 200) {
-          const data: RefreshResponse = await response.json();
-          dispatch(
-            setCredentials({ user: data.user, token: data.accessToken })
-          );
-        }
-        
-      }
-      setLoading(false);
-    };
-    refresh();
-  }, [dispatch]);
+  const loading = useRefreshToken()
 
   if (loading) return (
     <div className="h-100 d-flex justify-content-center align-items-center bg-dark">

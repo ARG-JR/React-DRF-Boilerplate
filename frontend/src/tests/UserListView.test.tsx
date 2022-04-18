@@ -1,60 +1,78 @@
 import React from "react";
 import { screen, waitFor } from "@testing-library/react";
-import { authedState, renderWithProviders } from "./test-utils";
+import { authedState, renderWithProviders, testUser } from "./test-utils";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import SignUpView from "../views/auth/SignUpView";
 import UserListView from "../views/users/UserListView";
-import { server } from "./server";
-import { rest } from "msw";
+
+import ShallowRenderer from "react-test-renderer/shallow";
+import { useFetchAllUsersQuery } from "../services/userService";
+import Loadscreen from "../components/Loadscreen";
+import MainLayoutWithToolbar from "../layout/MainLayoutWithToolbar";
+import { Alert } from "react-bootstrap";
+import UserList from "../components/users/UserList";
+
+jest.mock("../services/userService", () => {
+  return {
+    useFetchAllUsersQuery: jest.fn(),
+  };
+});
 
 describe("<UserListView />", () => {
-  it("should render the UserListView", async () => {
-    const mainLayout = renderWithProviders(
-      <MemoryRouter initialEntries={["/"]}>
-        <Routes>
-          <Route path="/" element={<UserListView />} />
-        </Routes>
-      </MemoryRouter>,
-      { preloadedState: authedState }
-    );
+  let mockQuery: jest.Mock;
+  const renderer = ShallowRenderer.createRenderer();
 
-    const heading = screen.queryAllByText(/Loading/i)[0];
-    expect(heading).toBeInTheDocument();
-
-    waitFor(() => {
-        const user = screen.queryAllByText(/Test Testerson/i)
-        expect(user).toBeInTheDocument()
-    })
+  beforeEach(() => {
+    mockQuery = jest.mocked(useFetchAllUsersQuery) as jest.Mock;
   });
 
-  it("should render the User list view with an error", async () => {
-      server.use(
-        rest.get(`${process.env.REACT_APP_API_URL}/users/`, (req, res, ctx) => {
-          return res(ctx.status(401));
-        })
-      );
-      
-    const mainLayout = renderWithProviders(
-      <MemoryRouter initialEntries={["/"]}>
-        <Routes>
-          <Route path="/" element={<UserListView />} />
-        </Routes>
-      </MemoryRouter>,
-      { preloadedState: authedState }
-    );
-
-    const heading = screen.queryAllByText(/Loading/i)[0];
-    expect(heading).toBeInTheDocument();
-
-    waitFor(() => {
-      const user = screen.queryAllByText(/Test Testerson/i);
-      expect(user).toBeNull();
-
-      const alert = screen.getByTestId("alert");
-      expect(alert).toBeInTheDocument()
+  it("should render loadscreen", () => {
+    mockQuery.mockImplementationOnce(() => {
+      const data = undefined;
+      const error = undefined;
+      const isLoading = true;
+      return { data, error, isLoading };
     });
+
+    renderer.render(<UserListView />);
+    const result = renderer.getRenderOutput();
+    expect(result.type).toBe(Loadscreen);
+    //expect(result.props.children).toEqual([<Loadscreen />]);
   });
 
+  it("should render error", () => {
+    mockQuery.mockImplementationOnce(() => {
+      const data = undefined;
+      const error = "ERROR";
+      const isLoading = false;
+      return { data, error, isLoading };
+    });
 
+    renderer.render(<UserListView />);
+    const result = renderer.getRenderOutput();
+    expect(result.type).toBe(MainLayoutWithToolbar);
+    expect(result.props.children).toEqual(
+      <>
+        <Alert>"ERROR"</Alert>
+        <UserList users={[]} />
+      </>
+    );
+  });
 
+  it("should render user list", () => {
+    const users = [testUser];
+    mockQuery.mockImplementationOnce(() => {
+      const data = users;
+      const error = undefined;
+      const isLoading = false;
+      return { data, error, isLoading };
+    });
+
+    renderer.render(<UserListView />);
+    const result = renderer.getRenderOutput();
+    expect(result.type).toBe(MainLayoutWithToolbar);
+    expect(result.props.children.props.children).toEqual([
+      undefined,
+      <UserList users={users} />,
+    ]);
+  });
 });

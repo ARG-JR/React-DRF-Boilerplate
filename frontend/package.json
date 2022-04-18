@@ -21,12 +21,14 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.1.1",
+    "@testing-library/react-hooks": "^8.0.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.4.1",
     "@types/node": "^16.11.27",
     "@types/react": "^18.0.5",
     "@types/react-dom": "^18.0.1",
     "@types/react-router-bootstrap": "^0.24.5",
+    "@types/react-test-renderer": "^18.0.0",
     "msw": "^0.39.2",
     "react-test-renderer": "^18.0.0",
     "sass": "^1.50.0"
@@ -61,6 +63,7 @@
       "!src/index.tsx",
       "!src/react-app-env.d.ts",
       "!src/models/*"
-    ]
+    ],
+    "resetMocks": false
   }
 }
