@@ -21,14 +21,15 @@ const SignUpForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-
+  const [errorMessage, setErrorMessage] = useState("")
   const navigate = useNavigate();
 
-  const [signup, { isLoading, error }] = useSignupMutation();
+  const [signup, { isLoading }] = useSignupMutation();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
+     e.preventDefault();
     if (password !== confirmPassword) {
-      // dispatch(signupFailed("Passwords must match"));
+      setErrorMessage("Passwords must match!")
       return;
     }
 
@@ -43,6 +44,7 @@ const SignUpForm = () => {
     try {
       await signup(user);
     } catch (err) {
+      setErrorMessage("An error has occured")
     }
     navigate("/signin");
   };
@@ -51,7 +53,7 @@ const SignUpForm = () => {
     <Card className="m-2">
       <Card.Body>
         <Card.Title className="text-center mb-4">Sign Up</Card.Title>
-        {error && <Alert variant="warning">{JSON.stringify(error)}</Alert>}
+        {errorMessage && <Alert variant="warning">{errorMessage}</Alert>}
         <Form onSubmit={handleSubmit}>
           <Row>
             <Col>

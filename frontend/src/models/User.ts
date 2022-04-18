@@ -7,8 +7,8 @@ export interface User {
   is_superuser?: boolean;
   is_staff?: boolean;
   last_login?: Date;
-  created?: Date;
-  updated?: Date;
+  created?: Date | string;
+  updated?: Date | string;
   is_active?: boolean;
   groups?: [];
   user_permissions?: string[];

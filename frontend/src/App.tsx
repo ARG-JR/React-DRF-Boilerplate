@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import SignUpView from "./views/auth/SignUpView";
 import SignInView from "./views/auth/SignInView";
 import Protect from "./components/auth/Protect";
-import { useAppDispatch, useTypedSelector } from "./hooks/store";
+import { useAppDispatch } from "./hooks/store";
 import { Spinner } from "react-bootstrap";
 import DashboardView from "./views/DashboardView";
 import UserListView from "./views/users/UserListView";
