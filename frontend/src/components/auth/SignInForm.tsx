@@ -5,7 +5,7 @@ import { setCredentials } from "../../features/auth/authSlice";
 
 import { useAppDispatch } from "../../hooks/store";
 import { TokenResponse, UserCredentials } from "../../models/Auth";
-import { useLoginMutation } from "../../services/auth";
+import { useLoginMutation } from "../../services/authService";
 
 const SignInForm = () => {
   const [email, setEmail] = useState("");
@@ -14,7 +14,7 @@ const SignInForm = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const [login, { isLoading }] = useLoginMutation();
+  const [login, { isLoading, error }] = useLoginMutation();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -24,8 +24,9 @@ const SignInForm = () => {
       password: password,
     };
 
-    try {
-      const response: TokenResponse = await login(credentials).unwrap();
+    const result = login(credentials);
+    if (!error) {
+      const response: TokenResponse = await result.unwrap();
       localStorage.setItem("refreshToken", response.refreshToken);
       dispatch(
         setCredentials({
@@ -34,7 +35,7 @@ const SignInForm = () => {
         })
       );
       navigate("/");
-    } catch (err) {
+    } else {
       localStorage.removeItem("refreshToken");
     }
   };

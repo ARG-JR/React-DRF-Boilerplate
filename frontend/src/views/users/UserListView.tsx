@@ -13,7 +13,7 @@ const UserListView = () => {
   return (
     <MainLayoutWithToolbar>
       <>
-        {error && <Alert data-testid="alert">{`${JSON.stringify(error)}`}</Alert>}
+        {error && <Alert>{`${JSON.stringify(error)}`}</Alert>}
 
         <UserList users={users || []} />
       </>
