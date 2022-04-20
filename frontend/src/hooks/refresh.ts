@@ -7,30 +7,29 @@ export const useRefreshToken = () => {
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
 
-  const refresh = async () => {
-    const token = localStorage.getItem("refreshToken");
-    if (token) {
-      const refreshRequest = {
-        refresh: token,
-      };
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/auth/refresh/`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(refreshRequest),
-        }
-      );
+  useEffect(() => {
+    const refresh = async () => {
+      const token = localStorage.getItem("refreshToken");
+      if (token) {
+        const refreshRequest = {
+          refresh: token,
+        };
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/auth/refresh/`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(refreshRequest),
+          }
+        );
 
-      if (response.status === 200) {
-        const data: RefreshResponse = await response.json();
-        dispatch(setCredentials({ user: data.user, token: data.accessToken }));
+        if (response.status === 200) {
+          const data: RefreshResponse = await response.json();
+          dispatch(setCredentials({ user: data.user, token: data.accessToken }));
+        }
       }
-    }
     setLoading(false);
   };
-
-  useEffect(() => {
     refresh();
   }, [refresh]);
 
