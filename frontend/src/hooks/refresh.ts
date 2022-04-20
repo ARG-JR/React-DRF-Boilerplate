@@ -32,7 +32,7 @@ export const useRefreshToken = () => {
 
   useEffect(() => {
     refresh();
-  }, []);
+  }, [refresh]);
 
   return loading;
 };
