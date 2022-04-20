@@ -29,7 +29,7 @@ export const useRefreshToken = () => {
         }
       }
     setLoading(false);
-  };
+    };
     refresh();
   }, [refresh]);
 
