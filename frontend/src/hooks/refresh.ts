@@ -31,7 +31,7 @@ export const useRefreshToken = () => {
     setLoading(false);
     };
     refresh();
-  }, []);
+  }, [dispatch]);
 
   return loading;
 };
